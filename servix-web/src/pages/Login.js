@@ -1,14 +1,17 @@
 import React, { useState, useContext } from 'react';
-import { signInWithEmailAndPassword } from 'firebase/auth';
+import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../services/firebase';
 import { AuthContext } from '../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import '../styles/Login.css';
 
 export default function Login() {
+  const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [isLogin, setIsLogin] = useState(true);
   const { setUsuario } = useContext(AuthContext);
   const navigate = useNavigate();
 
@@ -31,156 +34,146 @@ export default function Login() {
     }
   };
 
+  const handleRegister = async () => {
+    if (!username || !email || !senha) {
+      setError('Por favor, preencha todos os campos');
+      return;
+    }
+
+    try {
+      setLoading(true);
+      setError('');
+      const userCredential = await createUserWithEmailAndPassword(auth, email, senha);
+      setUsuario(userCredential.user);
+      navigate('/dashboard');
+    } catch (err) {
+      setError('Erro ao criar conta: ' + err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (isLogin) {
+      handleLogin();
+    } else {
+      handleRegister();
+    }
+  };
+
   return (
-    <div style={styles.container}>
-      <div style={styles.loginCard}>
-        <div style={styles.logo}>
-          <h1 style={styles.logoText}>🚀 Servix</h1>
-          <p style={styles.subtitle}>Sistema de Agendamento de Serviços</p>
-        </div>
-        
-        <h2 style={styles.title}>Login Prestador</h2>
-        
-        {error && (
-          <div style={styles.errorMessage}>
-            {error}
+    <div className={`container ${!isLogin ? 'active' : ''}`}>
+        <form className="form-box" onSubmit={handleSubmit}>
+          <h1>Login</h1>
+          {error && (
+            <div className="error-message">
+              {error}
+            </div>
+          )}
+          <div className="input-box">
+            <input 
+              type="email"
+              placeholder="Email" 
+              value={email} 
+              onChange={e => setEmail(e.target.value)}
+              disabled={loading}
+              required
+            />
+            <i className='bx bxs-envelope'></i>
           </div>
-        )}
-        
-        <div style={styles.formGroup}>
-          <label style={styles.label}>Email</label>
-          <input 
-            style={styles.input}
-            type="email"
-            placeholder="seu@email.com" 
-            value={email} 
-            onChange={e => setEmail(e.target.value)}
-            disabled={loading}
-          />
+          <div className="input-box">
+            <input 
+              type="password" 
+              placeholder="Password" 
+              value={senha} 
+              onChange={e => setSenha(e.target.value)}
+              disabled={loading}
+              required
+            />
+            <i className='bx bxs-lock-alt'></i>
+          </div>
+          <div className="forgot-link">
+            <a href="#">Forgot Password?</a>
+          </div>
+          <button type="submit" className="btn" disabled={loading}>
+            {loading ? 'Entrando...' : 'Login'}
+          </button>
+          <p>or login with social platforms</p>
+          <div className="social-icons">
+            <a href="#"><i className='bx bxl-google'></i></a>
+            <a href="#"><i className='bx bxl-facebook'></i></a>
+            <a href="#"><i className='bx bxl-github'></i></a>
+            <a href="#"><i className='bx bxl-linkedin'></i></a>
+          </div>
+        </form>
+
+        <form className="form-box register" onSubmit={handleSubmit}>
+          <h1>Registration</h1>
+          {error && (
+            <div className="error-message">
+              {error}
+            </div>
+          )}
+          <div className="input-box">
+            <input 
+              type="text"
+              placeholder="Username" 
+              value={username} 
+              onChange={e => setUsername(e.target.value)}
+              disabled={loading}
+              required
+            />
+            <i className='bx bxs-user'></i>
+          </div>
+          <div className="input-box">
+            <input 
+              type="email"
+              placeholder="Email" 
+              value={email} 
+              onChange={e => setEmail(e.target.value)}
+              disabled={loading}
+              required
+            />
+            <i className='bx bxs-envelope'></i>
+          </div>
+          <div className="input-box">
+            <input 
+              type="password" 
+              placeholder="Password" 
+              value={senha} 
+              onChange={e => setSenha(e.target.value)}
+              disabled={loading}
+              required
+            />
+            <i className='bx bxs-lock-alt'></i>
+          </div>
+          <button type="submit" className="btn" disabled={loading}>
+            {loading ? 'Criando...' : 'Register'}
+          </button>
+          <p>or register with social platforms</p>
+          <div className="social-icons">
+            <a href="#"><i className='bx bxl-google'></i></a>
+            <a href="#"><i className='bx bxl-facebook'></i></a>
+            <a href="#"><i className='bx bxl-github'></i></a>
+            <a href="#"><i className='bx bxl-linkedin'></i></a>
+          </div>
+        </form>
+
+        <div className="toggle-box">
+          <div className="toggle-panel toggle-left">
+            <h1>Hello, Welcome!</h1>
+            <p>Don't have an account?</p>
+            <button className="btn" onClick={() => setIsLogin(false)}>Register</button>
+          </div>
+
+          <div className="toggle-panel toggle-right">
+            <h1>Welcome Back!</h1>
+            <p>Already have an account?</p>
+            <button className="btn" onClick={() => setIsLogin(true)}>Login</button>
+          </div>
         </div>
-        
-        <div style={styles.formGroup}>
-          <label style={styles.label}>Senha</label>
-          <input 
-            style={styles.input}
-            type="password" 
-            placeholder="Sua senha" 
-            value={senha} 
-            onChange={e => setSenha(e.target.value)}
-            disabled={loading}
-          />
-        </div>
-        
-        <button 
-          style={styles.button}
-          onClick={handleLogin}
-          disabled={loading}
-        >
-          {loading ? 'Entrando...' : 'Entrar'}
-        </button>
-        
-        <div style={styles.footer}>
-          <p style={styles.footerText}>
-            Não tem conta? <a href="#" style={styles.link}>Cadastre-se aqui</a>
-          </p>
-        </div>
-      </div>
     </div>
   );
 }
 
-const styles = {
-  container: {
-    minHeight: '100vh',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-    padding: '20px',
-    fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif'
-  },
-  loginCard: {
-    backgroundColor: 'white',
-    borderRadius: '16px',
-    padding: '40px',
-    boxShadow: '0 20px 40px rgba(0,0,0,0.1)',
-    width: '100%',
-    maxWidth: '400px',
-    textAlign: 'center'
-  },
-  logo: {
-    marginBottom: '30px'
-  },
-  logoText: {
-    fontSize: '32px',
-    fontWeight: 'bold',
-    color: '#333',
-    margin: '0 0 8px 0'
-  },
-  subtitle: {
-    color: '#666',
-    fontSize: '14px',
-    margin: '0'
-  },
-  title: {
-    fontSize: '24px',
-    fontWeight: '600',
-    color: '#333',
-    margin: '0 0 30px 0'
-  },
-  errorMessage: {
-    backgroundColor: '#ffebee',
-    color: '#c62828',
-    padding: '12px',
-    borderRadius: '8px',
-    marginBottom: '20px',
-    fontSize: '14px'
-  },
-  formGroup: {
-    marginBottom: '20px',
-    textAlign: 'left'
-  },
-  label: {
-    display: 'block',
-    marginBottom: '8px',
-    fontSize: '14px',
-    fontWeight: '500',
-    color: '#333'
-  },
-  input: {
-    width: '100%',
-    padding: '12px 16px',
-    border: '2px solid #e1e5e9',
-    borderRadius: '8px',
-    fontSize: '16px',
-    transition: 'border-color 0.3s ease',
-    boxSizing: 'border-box'
-  },
-  button: {
-    width: '100%',
-    padding: '14px',
-    backgroundColor: '#007AFF',
-    color: 'white',
-    border: 'none',
-    borderRadius: '8px',
-    fontSize: '16px',
-    fontWeight: '600',
-    cursor: 'pointer',
-    transition: 'background-color 0.3s ease',
-    marginBottom: '20px'
-  },
-  footer: {
-    borderTop: '1px solid #e1e5e9',
-    paddingTop: '20px'
-  },
-  footerText: {
-    color: '#666',
-    fontSize: '14px',
-    margin: '0'
-  },
-  link: {
-    color: '#007AFF',
-    textDecoration: 'none',
-    fontWeight: '500'
-  }
-};
