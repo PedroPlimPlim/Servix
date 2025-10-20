@@ -1,197 +1,194 @@
-# Instruções de Instalação - Servix
+# 🚀 Guia de Instalação - Servix
 
-## Pré-requisitos
+## 📋 Pré-requisitos
+
+Antes de começar, certifique-se de ter instalado:
 
 1. **Node.js** (versão 16 ou superior)
-2. **PostgreSQL** (versão 12 ou superior)
-3. **npm** ou **yarn**
+   - Download: https://nodejs.org/
+   - Verificar instalação: `node --version`
 
-## Configuração do Banco de Dados
+2. **npm** (vem com o Node.js)
+   - Verificar instalação: `npm --version`
 
-1. Instale o PostgreSQL
-2. Crie um banco de dados:
-```sql
-CREATE DATABASE servix_db;
-```
-3. Crie um usuário (opcional):
-```sql
-CREATE USER servix_user WITH PASSWORD 'sua_senha';
-GRANT ALL PRIVILEGES ON DATABASE servix_db TO servix_user;
-```
+3. **Git** (para clonar o repositório)
+   - Download: https://git-scm.com/
 
-## Configuração do Backend
+## 🔧 Instalação Passo a Passo
 
-1. Navegue até o diretório da API:
+### 1. Clonar o Repositório
 ```bash
-cd Servix/api_servix
+git clone [URL_DO_REPOSITORIO]
+cd Servix
 ```
 
-2. Instale as dependências:
+### 2. Instalar Dependências do Backend
 ```bash
+cd api_servix
 npm install
 ```
 
-3. Crie um arquivo `.env` baseado no `config.example.txt`:
+### 3. Instalar Dependências do Frontend Web
 ```bash
-cp ../config.example.txt .env
+cd ../servix-web
+npm install
 ```
 
-4. Edite o arquivo `.env` com suas configurações:
+### 4. Instalar Dependências do Mobile
+```bash
+cd ../src
+npm install
+```
+
+### 5. Instalar Dependências do App Expo
+```bash
+cd ../servix-app
+npm install
+```
+
+## 🗄️ Configuração do Banco de Dados
+
+### 1. Instalar PostgreSQL
+- Download: https://www.postgresql.org/download/
+- Criar um banco de dados chamado `servix`
+
+### 2. Configurar Variáveis de Ambiente
+Crie um arquivo `.env` na pasta `api_servix` com:
+
 ```env
-DB_NAME=servix_db
-DB_USER=postgres
-DB_PASSWORD=sua_senha
 DB_HOST=localhost
 DB_PORT=5432
+DB_NAME=servix
+DB_USER=seu_usuario
+DB_PASS=sua_senha
+JWT_SECRET=seu_jwt_secret_aqui
 PORT=3000
-NODE_ENV=development
 ```
 
-5. Execute o servidor:
-```bash
-npm run dev
+## 🔥 Configuração do Firebase
+
+### 1. Criar Projeto no Firebase
+- Acesse: https://console.firebase.google.com/
+- Crie um novo projeto
+- Ative Authentication (Email/Password)
+
+### 2. Configurar Frontend Web
+Crie um arquivo `.env.local` na pasta `servix-web` com:
+
+```env
+REACT_APP_FIREBASE_API_KEY=sua_api_key
+REACT_APP_FIREBASE_AUTH_DOMAIN=seu_projeto.firebaseapp.com
+REACT_APP_FIREBASE_PROJECT_ID=seu_projeto_id
+REACT_APP_FIREBASE_STORAGE_BUCKET=seu_projeto.appspot.com
+REACT_APP_FIREBASE_MESSAGING_SENDER_ID=seu_sender_id
+REACT_APP_FIREBASE_APP_ID=seu_app_id
 ```
 
-O servidor estará rodando em `http://localhost:3000`
+### 3. Configurar Mobile
+Copie as mesmas configurações para o arquivo `src/firebase.js`
 
-## Configuração do Frontend Web
+## 🚀 Executando o Projeto
 
-1. Navegue até o diretório do frontend:
+### 1. Iniciar o Backend
 ```bash
-cd Servix/servix-web
-```
-
-2. Instale as dependências:
-```bash
-npm install
-```
-
-3. Execute o frontend:
-```bash
+cd api_servix
 npm start
 ```
 
-O frontend estará rodando em `http://localhost:3001`
-
-## Configuração do App Mobile (React Native)
-
-### Pré-requisitos para React Native:
-- **Android Studio** (para Android)
-- **Xcode** (para iOS - apenas no Mac)
-- **Java Development Kit (JDK)** versão 11 ou superior
-- **Android SDK** configurado
-
-### Instalação:
-
-1. Navegue até o diretório do mobile:
+### 2. Iniciar o Frontend Web
 ```bash
-cd Servix/src
+cd servix-web
+npm start
 ```
 
-2. Instale as dependências:
+### 3. Iniciar o Mobile (Expo)
 ```bash
+cd servix-app
+npx expo start
+```
+
+## 🔧 Solução de Problemas Comuns
+
+### Erro: "Missing script: start"
+**Solução:**
+```bash
+cd servix-web
+npm install
+npm start
+```
+
+### Erro: "Invalid options object. Dev Server has been initialized using an options object that does not match the API schema"
+**Solução:**
+```bash
+cd servix-web
+rm -rf node_modules package-lock.json
+npm install
+npm start
+```
+
+### Erro: "react-scripts não é reconhecido"
+**Solução:**
+```bash
+cd servix-web
+npm install react-scripts
+npm start
+```
+
+### Erro: "Module not found"
+**Solução:**
+```bash
+# Limpar cache e reinstalar
+rm -rf node_modules package-lock.json
+npm cache clean --force
 npm install
 ```
 
-3. **Para Android:**
-   - Abra o Android Studio
-   - Configure um emulador Android ou conecte um dispositivo
-   - Execute:
-   ```bash
-   npx react-native run-android
-   ```
+### Erro: "Firebase not initialized"
+**Solução:**
+1. Verificar se o arquivo `.env.local` existe
+2. Verificar se as variáveis estão corretas
+3. Reiniciar o servidor
 
-4. **Para iOS (apenas no Mac):**
-   - Abra o Xcode
-   - Execute:
-   ```bash
-   cd ios && pod install && cd ..
-   npx react-native run-ios
-   ```
+## 📱 Executando no Mobile
 
-### Scripts de Inicialização Rápida:
-
-**Windows:**
+### 1. Instalar Expo CLI
 ```bash
-start.bat
+npm install -g @expo/cli
 ```
 
-**Linux/Mac:**
+### 2. Instalar Expo Go no celular
+- Android: Google Play Store
+- iOS: App Store
+
+### 3. Executar o projeto
 ```bash
-chmod +x start.sh
-./start.sh
+cd servix-app
+npx expo start
 ```
 
-## Configuração do Firebase
+## 🌐 URLs de Acesso
 
-1. Acesse o [Firebase Console](https://console.firebase.google.com/)
-2. Crie um novo projeto ou use um existente
-3. Ative a autenticação por email/senha
-4. Copie as configurações do Firebase para os arquivos:
-   - `Servix/servix-web/src/services/firebase.js`
-   - `Servix/src/firebase.js`
+- **Frontend Web:** http://localhost:3000
+- **Backend API:** http://localhost:3000
+- **Mobile:** Escaneie o QR code no terminal
 
-## Testando a Aplicação
+## 📝 Notas Importantes
 
-### Backend
-- Acesse `http://localhost:3000` - deve mostrar "API do Servix online 🚀"
-- Teste os endpoints:
-  - `GET http://localhost:3000/api/usuarios`
-  - `POST http://localhost:3000/api/usuarios`
+1. **Sempre execute `npm install`** após clonar o repositório
+2. **Configure as variáveis de ambiente** antes de executar
+3. **Verifique se o PostgreSQL está rodando** antes de iniciar o backend
+4. **Use a mesma versão do Node.js** em todos os ambientes
 
-### Frontend Web
-- Acesse `http://localhost:3001`
-- Faça login com uma conta Firebase
-- Teste o cadastro de serviços
+## 🆘 Ainda com Problemas?
 
-### Mobile
-- Execute o app no emulador/dispositivo
-- Teste o login e navegação
+Se ainda estiver com problemas:
 
-## Estrutura de Arquivos
+1. Verifique se todas as dependências estão instaladas
+2. Verifique se as variáveis de ambiente estão corretas
+3. Verifique se o banco de dados está rodando
+4. Verifique se as portas não estão em uso
+5. Reinicie o computador e tente novamente
 
-```
-Servix/
-├── api_servix/          # Backend API
-│   ├── config/          # Configurações do banco
-│   ├── controllers/     # Controladores da API
-│   ├── models/          # Modelos do Sequelize
-│   ├── routes/          # Rotas da API
-│   └── server.js        # Servidor principal
-├── servix-web/          # Frontend Web (React)
-│   ├── public/          # Arquivos públicos
-│   └── src/             # Código fonte React
-├── src/                 # App Mobile (React Native)
-│   ├── screens/         # Telas do app
-│   ├── contexts/        # Contextos React
-│   └── services/        # Serviços (API, Firebase)
-└── README.md            # Documentação principal
-```
+## 📞 Suporte
 
-## Solução de Problemas
-
-### Erro de Conexão com Banco
-- Verifique se o PostgreSQL está rodando
-- Confirme as credenciais no arquivo `.env`
-- Teste a conexão manualmente
-
-### Erro de CORS
-- O CORS está configurado para aceitar todas as origens em desenvolvimento
-- Em produção, configure as origens específicas
-
-### Erro de Firebase
-- Verifique se as configurações do Firebase estão corretas
-- Confirme se a autenticação por email/senha está habilitada
-
-### Erro no React Native
-- Execute `npx react-native doctor` para verificar a configuração
-- Limpe o cache: `npx react-native start --reset-cache`
-
-## Próximos Passos
-
-1. Implementar autenticação JWT no backend
-2. Adicionar middleware de autenticação
-3. Implementar upload de imagens
-4. Adicionar notificações push
-5. Implementar sistema de avaliações
-6. Adicionar relatórios e dashboard administrativo
+Para mais ajuda, entre em contato com a equipe de desenvolvimento.
